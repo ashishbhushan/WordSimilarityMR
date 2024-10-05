@@ -3,7 +3,6 @@ package MapReduce
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.conf.*
 import org.apache.hadoop.io.*
-import org.apache.hadoop.util.*
 import org.apache.hadoop.mapred.*
 
 import java.io.IOException
@@ -12,6 +11,7 @@ import scala.jdk.CollectionConverters.*
 import Tokenizer.JTokkitTokenizer.*
 
 object MapReduceTokenizer:
+    //noinspection ScalaWeakerAccess
     class MapTokenizer extends MapReduceBase with Mapper[LongWritable, Text, Text, IntWritable]:
         private final val one = new IntWritable(1)
         private val words = new Text()
@@ -26,6 +26,7 @@ object MapReduceTokenizer:
                 output.collect(words, one)
             }
 
+    //noinspection ScalaWeakerAccess
     class ReduceTokenizer extends MapReduceBase with Reducer[Text, IntWritable, Text, IntWritable]:
         override def reduce(key: Text, values: util.Iterator[IntWritable], output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =
             val sum = values.asScala.reduce((valueOne, valueTwo) => new IntWritable(valueOne.get() + valueTwo.get()))
@@ -41,12 +42,12 @@ object MapReduceTokenizer:
         }
         val conf: JobConf = new JobConf(this.getClass)
         conf.setJobName("WordCount")
-        //        conf.set("fs.defaultFS", "local")
-        if (inputPath.startsWith("/cs441hw1/")) {
-            conf.set("fs.defaultFS", "hdfs://localhost:9000")
-        }
-        else {
-            conf.set("fs.defaultFS", "local")
+        //noinspection DuplicatedCode
+        if (inputPath.startsWith("hdfs")) {
+        } else if (inputPath.startsWith("/cs441/input")) {
+            conf.set("fs.defaultFS", "hdfs://localhost:9000") // Adjust this with your HDFS host if using HDFS
+        } else {
+            conf.set("fs.defaultFS", "file:///")
         }
         conf.set("mapreduce.job.maps", "1")
         conf.set("mapreduce.job.reduces", "1")

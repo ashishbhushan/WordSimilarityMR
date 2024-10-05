@@ -15,10 +15,10 @@ object main {
     val outputDir = args(1)
     val confmain = new Configuration()
     val fs = FileSystem.get(confmain)
-    if(inputFilePath.startsWith("/cs441hw1/input")) {
-      confmain.set("fs.defaultFS", "hdfs://localhost:9000")
-    }
-    else {
+    if (inputFilePath.startsWith("hdfs")) {
+    } else if (inputFilePath.startsWith("/cs441/input")) {
+      confmain.set("fs.defaultFS", "hdfs://localhost:9000") // Adjust this with your HDFS host if using HDFS
+    } else {
       confmain.set("fs.defaultFS", "file:///")
     }
     val inputPath = new Path(inputFilePath)
