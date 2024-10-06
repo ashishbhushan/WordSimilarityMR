@@ -64,8 +64,11 @@ Executing main.scala will trigger below processes.
 1. Shard generation (shardFile(lines, shardsOutputDir, linesPerShard, confmain) - main.scala:33) - Input file will be split into different files with maximum of 20 lines each (the number of files depends on the total number of lines in the input file). For now each file will contain 20 lines as per the parameter linesPerShard present in UtilitiesDir.Utilities. Once done you can see the different shards generated in the folder (src/main/resources/output/shards) as shown below.
 
 ![image](https://github.com/user-attachments/assets/0dfef966-f07a-4a83-a047-613203971108)
-3. MapReduceTokenizer Job (MapReduceTokenizer.runMapReduceTokenizer(shardsOutputDir, mapRedTokenOut) - main.scala:38) - This job will take the path of the shards as the input along with an output directory to generate result. Result will contain the words obtained via each file from the shards, its respective token and the count of the words.
-4. VocabStatistics (getYamlFile(text, outputDir, fs) - main.scala:45) - This will do two tasks, first task will generate the vocabulary.yaml file containing all the words along with their tokens and count. And the second task will generate a file containing only tokens (tokens.txt).
+
+2. MapReduceTokenizer Job (MapReduceTokenizer.runMapReduceTokenizer(shardsOutputDir, mapRedTokenOut) - main.scala:38) - This job will take the path of the shards as the input along with an output directory to generate result. Result will contain the words obtained via each file from the shards, its respective token and the count of the words.
+
+3. VocabStatistics (getYamlFile(text, outputDir, fs) - main.scala:45) - This will do two tasks, first task will generate the vocabulary.yaml file containing all the words along with their tokens and count. And the second task will generate a file containing only tokens (tokens.txt).
+   
 ![image](https://github.com/user-attachments/assets/0f011125-ae9f-4df3-ba6b-c177591ed5ae)
 
 Results: Examine the results obtained from the MapReduce job, which include the word+token count.
