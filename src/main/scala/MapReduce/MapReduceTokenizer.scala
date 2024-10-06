@@ -44,7 +44,7 @@ object MapReduceTokenizer:
         conf.setJobName("WordCount")
         //noinspection DuplicatedCode
         if (inputPath.startsWith("hdfs")) {
-        } else if (inputPath.startsWith("/cs441/input")) {
+        } else if (inputPath.startsWith("/cs441/")) {
             conf.set("fs.defaultFS", "hdfs://localhost:9000") // Adjust this with your HDFS host if using HDFS
         } else {
             conf.set("fs.defaultFS", "file:///")
