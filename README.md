@@ -4,7 +4,7 @@
 ## Introduction
 Homework assignment 1 for CS441 focuses on implementing an encoder for a Large Language Model (LLM) from scratch using distributed computing in the cloud. In this phase, we will create a mapper and reducer using Apache Hadoop to process a given text corpus, generating a YAML or CSV file containing tokens. After testing the program locally, we will deploy and run it on Amazon Elastic MapReduce (EMR).
 
-**Video Link:** [Video Link] (The video explains the deployment of the Hadoop application in the AWS EMR Cluster and the project structure.)
+**Video Link:** [Video Link](https://youtu.be/Ru8-tNx0Twk) (The video explains the deployment of the Hadoop application in the AWS EMR Cluster and the project structure.)
 
 ## Environment
 - **OS:** Windows 11
@@ -53,7 +53,8 @@ Before starting the project, ensure you have the following tools and accounts se
 ## Usage
 Follow these steps to execute the project:
 Data Preparation: Ensure you have the original dataset for processing (src/main/resources/input/data.txt) - this will be passed as an argument to main.scala.
-Configuration: Ensure you pass the input file path (src/main/resources/input/data.txt) and output directory (src/main/resources/output) while running main.scala. Setup the command line using intelliJ configuration if required as shown below.
+Configuration: Ensure you pass the input file path (src/main/resources/input/data.txt) and output directory (src/main/resources/output) while running main.scala. Setup the command line using intelliJ configuration if required as shown below. Please do make sure to set shorten command line parameter to jar manifest.
+
 ![image](https://github.com/user-attachments/assets/b2e58258-30a4-4dd0-9f2b-4ab0fa5c8e6d)
 
 Shards Output Directory: Ensure src/main/resources/output/shards exists - create if it doesn't.
