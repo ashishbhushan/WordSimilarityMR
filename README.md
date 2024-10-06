@@ -35,8 +35,8 @@ The project comprises the following key components:
 2. **Sharding**  
    Shards are generated from the cleaned data to facilitate parallel processing. This involves dividing the text corpus into smaller, manageable segments, allowing for efficient distributed computation.
 
-3. **MapReduce Jobs**  
-   The project implements three main MapReduce jobs to encode text and generate count from the text data:
+3. **MapReduce Job**  
+   The project implements one MapReduce job to encode text and generate count from the text data:
    - **Map Reduce Tokenizer Job:** Processes the input shards to count the occurrences of each word in the text corpus, generating a mapping of words along with their tokenIDs to their frequencies.
 
 4. **Tokenization**  
