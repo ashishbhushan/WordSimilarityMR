@@ -1,5 +1,6 @@
 import UtilitiesDir.Utilities.*
 import DataProcessor.Sharder.*
+import DataProcessor.ShardsToTokens.*
 import MapReduce.MapReduceTokenizer
 import VocabStatistics.VocabStatistics.*
 
@@ -22,6 +23,7 @@ object main {
     } else {
       confmain.set("fs.defaultFS", "file:///")
     }
+    
     val inputPath = new Path(inputFilePath)
 
     val inputStream = fs.open(inputPath)
@@ -30,8 +32,11 @@ object main {
     //preprocessing+ sharding+ write shards to
     val shardsOutputDir = outputDir+"/shards"
 
-    shardFile(lines, shardsOutputDir, linesPerShard, confmain)
+    shardFile(lines, shardsOutputDir, linesPerShard, fs)
     inputStream.close()
+
+    val tokensPath = new Path(s"$outputDir/tokens.txt")
+    shardsToTokens(shardsOutputDir, tokensPath, fs)
 
     val mapRedTokenOut = outputDir+"/mapRedTokenOut"
 

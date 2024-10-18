@@ -11,7 +11,6 @@ import scala.jdk.CollectionConverters.*
 import Tokenizer.JTokkitTokenizer.*
 
 object MapReduceTokenizer:
-    //noinspection ScalaWeakerAccess
     class MapTokenizer extends MapReduceBase with Mapper[LongWritable, Text, Text, IntWritable]:
         private final val one = new IntWritable(1)
         private val words = new Text()
@@ -22,7 +21,6 @@ object MapReduceTokenizer:
             line.split(" ").foreach { word =>
                 val tokens = tokenize(word).mkString(", ")
                 words.set(s"$word, [$tokens]")
-                //                println(words)
                 output.collect(words, one)
             }
 
