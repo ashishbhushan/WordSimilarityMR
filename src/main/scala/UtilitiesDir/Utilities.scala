@@ -1,5 +1,5 @@
 package UtilitiesDir
 
 object Utilities {
-    val linesPerShard = 20
+    val linesPerShard = 2000
 }

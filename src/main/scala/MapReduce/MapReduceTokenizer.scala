@@ -3,67 +3,75 @@ package MapReduce
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.conf.*
 import org.apache.hadoop.io.*
-import org.apache.hadoop.mapred.*
+import org.apache.hadoop.mapreduce.*
+import org.apache.hadoop.mapreduce.lib.input.{FileInputFormat, TextInputFormat}
+import org.apache.hadoop.mapreduce.lib.output.{FileOutputFormat, TextOutputFormat}
 
 import java.io.IOException
-import java.util
 import scala.jdk.CollectionConverters.*
-import Tokenizer.JTokkitTokenizer.*
+import UtilitiesDir.JTokkitTokenizer.*
+import org.slf4j.LoggerFactory
 
-object MapReduceTokenizer:
-    class MapTokenizer extends MapReduceBase with Mapper[LongWritable, Text, Text, IntWritable]:
+object MapReduceTokenizer {
+    class MapTokenizer extends Mapper[LongWritable, Text, Text, IntWritable] {
+        private val logger = LoggerFactory.getLogger(classOf[MapTokenizer])
         private final val one = new IntWritable(1)
         private val words = new Text()
 
         @throws[IOException]
-        override def map(key: LongWritable, value: Text, output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =
+        override def map(key: LongWritable, value: Text, context: Mapper[LongWritable, Text, Text, IntWritable]#Context): Unit = {
+            logger.info(s"Processing file: ${key.toString}")
             val line: String = value.toString
             line.split(" ").foreach { word =>
                 val tokens = tokenize(word).mkString(", ")
                 words.set(s"$word, [$tokens]")
-                output.collect(words, one)
+                context.write(words, one)
             }
+        }
+    }
 
-    //noinspection ScalaWeakerAccess
-    class ReduceTokenizer extends MapReduceBase with Reducer[Text, IntWritable, Text, IntWritable]:
-        override def reduce(key: Text, values: util.Iterator[IntWritable], output: OutputCollector[Text, IntWritable], reporter: Reporter): Unit =
-            val sum = values.asScala.reduce((valueOne, valueTwo) => new IntWritable(valueOne.get() + valueTwo.get()))
-            output.collect(key, new IntWritable(sum.get()))
+    class ReduceTokenizer extends Reducer[Text, IntWritable, Text, IntWritable] {
+        @throws[IOException]
+        override def reduce(key: Text, values: java.lang.Iterable[IntWritable], context: Reducer[Text, IntWritable, Text, IntWritable]#Context): Unit = {
+            // Calculate the sum of the values
+            val sum = values.asScala.foldLeft(0) { (acc, value) => acc + value.get() }
+
+            // Emit the key and the computed sum
+            context.write(key, new IntWritable(sum))
+        }
+    }
 
     def runMapReduceTokenizer(inputPath: String, outputPath: String): Boolean = {
-        val conftemp = new Configuration()
-        val fs = FileSystem.get(conftemp)
+        val conf = new Configuration()
+        val fs = FileSystem.get(conf)
         val outputDir = new Path(outputPath)
         if (fs.exists(outputDir)) {
             println(s"Output path $outputDir exists. Deleting it.")
             fs.delete(outputDir, true)
         }
-        val conf: JobConf = new JobConf(this.getClass)
-        conf.setJobName("WordCount")
-        //noinspection DuplicatedCode
+        val job = Job.getInstance(conf, "Word Count")
         if (inputPath.startsWith("hdfs")) {
         } else if (inputPath.startsWith("/cs441/")) {
             conf.set("fs.defaultFS", "hdfs://localhost:9000") // Adjust this with your HDFS host if using HDFS
         } else {
             conf.set("fs.defaultFS", "file:///")
         }
-        conf.set("mapreduce.job.maps", "1")
-        conf.set("mapreduce.job.reduces", "1")
-        conf.setOutputKeyClass(classOf[Text])
-        conf.setOutputValueClass(classOf[IntWritable])
-        conf.setMapperClass(classOf[MapTokenizer])
-        conf.setCombinerClass(classOf[ReduceTokenizer])
-        conf.setReducerClass(classOf[ReduceTokenizer])
-        conf.setInputFormat(classOf[TextInputFormat])
-        conf.setOutputFormat(classOf[TextOutputFormat[Text, IntWritable]])
-        FileInputFormat.setInputPaths(conf, new Path(inputPath))
-        FileOutputFormat.setOutputPath(conf, new Path(outputPath))
-        val jobSuccess = JobClient.runJob(conf)
-        val jobStatus = jobSuccess.isSuccessful
-        if (jobStatus) {
-            println("Job completed successfully!")
-        } else {
-            println("Job failed.")
-        }
-        jobStatus
+        job.setJarByClass(getClass)
+        job.setMapperClass(classOf[MapTokenizer]) // Set your mapper class here
+        job.setReducerClass(classOf[ReduceTokenizer])
+
+        job.setMapOutputKeyClass(classOf[Text])
+        job.setMapOutputValueClass(classOf[IntWritable])
+
+        job.setOutputKeyClass(classOf[Text])
+        job.setOutputValueClass(classOf[IntWritable])
+
+        job.setInputFormatClass(classOf[TextInputFormat])
+        job.setOutputFormatClass(classOf[TextOutputFormat[Text, IntWritable]])
+
+        FileInputFormat.addInputPath(job, new Path(inputPath))
+        FileOutputFormat.setOutputPath(job, new Path(outputPath))
+
+        job.waitForCompletion(true)
     }
+}
