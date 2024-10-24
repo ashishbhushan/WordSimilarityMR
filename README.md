@@ -16,12 +16,11 @@ Homework assignment 1 for CS441 focuses on implementing an encoder for a Large L
 ## Running the Project
 1. **Clone this repository:**
    ```bash
-   git clone https://github.com/ashishbhushan/CS441.git
-   git checkout master
+   git clone https://github.com/ashishbhushan/CS441HW1.git
    ```
 2. **Navigate to the Project:**
    ```bash
-   cd CS441
+   cd CS441HW1
    ```
 3. **Open the project in IntelliJ:**  
    [How to Open a Project in IntelliJ](https://www.jetbrains.com/help/idea/import-project-or-module-wizard.html#open-project)
