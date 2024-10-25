@@ -9,7 +9,7 @@ object Sharder {
     def shardFile(inputFile: String, outputDir: String, linesPerShard: Int, sharderFileSystem: FileSystem): Unit = {
         val flag = true
         try {
-            val lines = inputFile.split("\\r?\\n").toArray
+            val lines = inputFile.split("\\r?\\n")
 
             // Filter out blank lines (empty or containing only whitespace)
             val nonBlankLines = lines.filter(_.trim.nonEmpty)

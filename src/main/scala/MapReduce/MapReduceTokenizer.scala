@@ -20,7 +20,6 @@ object MapReduceTokenizer {
 
         @throws[IOException]
         override def map(key: LongWritable, value: Text, context: Mapper[LongWritable, Text, Text, IntWritable]#Context): Unit = {
-            logger.info(s"Processing file: ${key.toString}")
             val line: String = value.toString
             line.split(" ").foreach { word =>
                 val tokens = tokenize(word).mkString(", ")

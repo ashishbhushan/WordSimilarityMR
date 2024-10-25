@@ -58,8 +58,6 @@ object MapReduceEmbedding:
 
     @throws[IOException]
     override def map(key: LongWritable, value: Text, context: Mapper[LongWritable, Text, Text, Text]#Context): Unit = {
-      println(s"Received key: ${key.getClass.getName}, value: ${value.getClass.getName}")
-      logger.info(s"Processing file: ${key.toString}")
       val lines: List[String] = value.toString.split("\n").toList
       val allSentences = loadSentences(lines)
       val embeddings = generateEmbeddings(word2Vec, allSentences)
